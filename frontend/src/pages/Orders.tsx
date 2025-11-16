@@ -18,12 +18,12 @@ export default function Orders() {
 
   const loadOrders = async () => {
     try {
-      const data = await api.getOrders();
-      setOrders(data);
+      const d = await api.getOrders();
+      setOrders(d);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load orders",
+        title: "Ошибка",
+        description: "Не удалось загрузить заказы",
         variant: "destructive",
       });
     } finally {
@@ -31,8 +31,8 @@ export default function Orders() {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const getStatusColor = (s: string) => {
+    switch (s) {
       case 'pending':
         return 'bg-yellow-500';
       case 'paid':
@@ -59,35 +59,35 @@ export default function Orders() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">My Orders</h1>
+      <h1 className="mb-8 text-3xl font-bold">Мои заказы</h1>
 
       {orders.length === 0 ? (
         <Card className="p-12 text-center">
           <Package className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-          <h2 className="mb-2 text-xl font-semibold">No orders yet</h2>
+          <h2 className="mb-2 text-xl font-semibold">Заказов пока нет</h2>
           <p className="mb-6 text-muted-foreground">
-            Your order history will appear here
+            История ваших заказов появится здесь
           </p>
           <Button asChild>
-            <Link to="/">Start Shopping</Link>
+            <Link to="/">Начать покупки</Link>
           </Button>
         </Card>
       ) : (
         <div className="space-y-6">
-          {orders.map((order) => (
-            <Card key={order.id} className="p-6">
+          {orders.map((o) => (
+            <Card key={o.id} className="p-6">
               <div className="mb-4 flex items-start justify-between">
                 <div>
                   <div className="mb-2 flex items-center gap-3">
                     <h3 className="text-lg font-semibold">
-                      Order #{order.id}
+                      Заказ #{o.id}
                     </h3>
-                    <Badge className={getStatusColor(order.status)}>
-                      {order.status}
+                    <Badge className={getStatusColor(o.status)}>
+                      {o.status === 'pending' ? 'Ожидает' : o.status === 'processing' ? 'В обработке' : o.status === 'completed' ? 'Завершен' : o.status === 'cancelled' ? 'Отменен' : o.status}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(order.created_at).toLocaleDateString('en-US', {
+                    {new Date(o.created_at).toLocaleDateString('ru-RU', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
@@ -95,37 +95,37 @@ export default function Orders() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-muted-foreground">Total</div>
-                  <div className="text-2xl font-bold">₽{order.total_price}</div>
+                  <div className="text-sm text-muted-foreground">Всего</div>
+                  <div className="text-2xl font-bold">₽{o.total_price}</div>
                 </div>
               </div>
 
               <div className="space-y-3 border-t border-border pt-4">
-                {order.items.map((item) => (
-                  <div key={item.id} className="flex gap-4">
-                    <Link to={`/product/${item.product.id}`}>
+                {o.items.map((i) => (
+                  <div key={i.id} className="flex gap-4">
+                    <Link to={`/product/${i.product.id}`}>
                       <img
-                        src={item.product.image}
-                        alt={item.product.name}
+                        src={i.product.image}
+                        alt={i.product.name}
                         className="h-16 w-16 rounded-lg object-cover"
                       />
                     </Link>
                     <div className="flex flex-1 items-center justify-between">
                       <div>
                         <Link
-                          to={`/product/${item.product.id}`}
+                          to={`/product/${i.product.id}`}
                           className="font-medium hover:text-primary"
                         >
-                          {item.product.name}
+                          {i.product.name}
                         </Link>
                         <p className="text-sm text-muted-foreground">
-                          {item.product.author}
+                          {i.product.author}
                         </p>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold">₽{item.price}</div>
+                        <div className="font-semibold">₽{i.price}</div>
                         <div className="text-sm text-muted-foreground">
-                          Qty: {item.quantity}
+                          Количество: {i.quantity}
                         </div>
                       </div>
                     </div>

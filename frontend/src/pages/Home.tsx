@@ -49,16 +49,16 @@ export default function Home({ searchQuery }: HomeProps) {
 
   const loadInitialData = async () => {
     try {
-      const [categoriesData, stylesData] = await Promise.all([
+      const [cats, sts] = await Promise.all([
         api.getCategories(),
         api.getStyles(),
       ]);
-      setCategories(categoriesData);
-      setStyles(stylesData);
+      setCategories(cats);
+      setStyles(sts);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load filters",
+        title: "Ошибка",
+        description: "Не удалось загрузить данные для фильтра",
         variant: "destructive",
       });
     }
@@ -67,20 +67,20 @@ export default function Home({ searchQuery }: HomeProps) {
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const params: any = {};
-      if (selectedCategory) params.category = selectedCategory;
-      if (selectedStyle) params.style = selectedStyle;
-      if (priceRange[0] > 0) params.min_price = priceRange[0];
-      if (priceRange[1] < 10000) params.max_price = priceRange[1];
-      if (sortBy) params.ordering = sortBy;
-      if (searchQuery) params.search = searchQuery;
+      const p: any = {};
+      if (selectedCategory) p.category = selectedCategory;
+      if (selectedStyle) p.style = selectedStyle;
+      if (priceRange[0] > 0) p.min_price = priceRange[0];
+      if (priceRange[1] < 10000) p.max_price = priceRange[1];
+      if (sortBy) p.ordering = sortBy;
+      if (searchQuery) p.search = searchQuery;
 
-      const data = await api.getProducts(params);
-      setProducts(data);
+      const d = await api.getProducts(p);
+      setProducts(d);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load products",
+        title: "Ошибка",
+        description: "Не удалось загрузить товары",
         variant: "destructive",
       });
     } finally {
@@ -90,18 +90,17 @@ export default function Home({ searchQuery }: HomeProps) {
 
   const loadFavorites = async () => {
     try {
-      const data = await api.getFavorites();
-      setFavorites(data.map((fav: any) => fav.product.id));
+      const d = await api.getFavorites();
+      setFavorites(d.map((f: any) => f.product.id));
     } catch (error) {
-      // Silent fail for favorites
     }
   };
 
   const handleAddToFavorites = async (productId: number) => {
     if (!isAuthenticated) {
       toast({
-        title: "Login required",
-        description: "Please login to add favorites",
+        title: "Требуется авторизация",
+        description: "Пожалуйста, войдите в систему, чтобы добавить товар в избранное",
         variant: "destructive",
       });
       return;
@@ -111,13 +110,13 @@ export default function Home({ searchQuery }: HomeProps) {
       await api.addToFavorites(productId);
       setFavorites([...favorites, productId]);
       toast({
-        title: "Added to favorites",
-        description: "Product saved to your favorites",
+        title: "Добавлено в избранное",
+        description: "Товар сохранен в избранное",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to add to favorites",
+        title: "Ошибка",
+        description: "Ошибка при сохранении в избранное",
         variant: "destructive",
       });
     }
@@ -132,39 +131,37 @@ export default function Home({ searchQuery }: HomeProps) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Hero Section */}
       <div className="mb-12 rounded-2xl bg-gradient-primary p-8 text-center text-primary-foreground md:p-12">
         <h1 className="mb-4 text-4xl font-bold md:text-5xl">
-          Premium Design Resources
+          Премиум дизайн ресурсы
         </h1>
         <p className="mx-auto max-w-2xl text-lg opacity-90">
-          Discover high-quality UI kits, mockups, icons, and templates created by talented designers
+          Откройте для себя высококачественные наборы пользовательского интерфейса, макеты, иконки и шаблоны, созданные талантливыми дизайнерами
         </p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-        {/* Filters Sidebar */}
         <aside className="space-y-6">
           <div className="rounded-lg border border-border bg-card p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Filters</h2>
+              <h2 className="text-lg font-semibold">Фильтры</h2>
               <Button variant="ghost" size="sm" onClick={clearFilters}>
-                Clear
+                Очистить
               </Button>
             </div>
 
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label>Category</Label>
+                <Label>Категория</Label>
                 <Select value={selectedCategory || "all"} onValueChange={(value) => setSelectedCategory(value === "all" ? "" : value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="All categories" />
+                    <SelectValue placeholder="Все категории" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All categories</SelectItem>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.name}>
-                        {cat.name} ({cat.products_count})
+                    <SelectItem value="all">Все категории</SelectItem>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={c.name}>
+                        {c.name} ({c.products_count})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -172,16 +169,16 @@ export default function Home({ searchQuery }: HomeProps) {
               </div>
 
               <div className="space-y-2">
-                <Label>Style</Label>
+                <Label>Стиль</Label>
                 <Select value={selectedStyle || "all"} onValueChange={(value) => setSelectedStyle(value === "all" ? "" : value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="All styles" />
+                    <SelectValue placeholder="Все стили" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All styles</SelectItem>
-                    {styles.map((style) => (
-                      <SelectItem key={style.id} value={style.name}>
-                        {style.name} ({style.products_count})
+                    <SelectItem value="all">Все стили</SelectItem>
+                    {styles.map((s) => (
+                      <SelectItem key={s.id} value={s.name}>
+                        {s.name} ({s.products_count})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -189,7 +186,7 @@ export default function Home({ searchQuery }: HomeProps) {
               </div>
 
               <div className="space-y-4">
-                <Label>Price Range</Label>
+                <Label>Диапазон цен</Label>
                 <Slider
                   value={priceRange}
                   onValueChange={setPriceRange}
@@ -198,24 +195,24 @@ export default function Home({ searchQuery }: HomeProps) {
                   className="mt-2"
                 />
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>₽{priceRange[0]}</span>
-                  <span>₽{priceRange[1]}</span>
+                  <span>{priceRange[0]} сомов</span>
+                  <span>{priceRange[1]} сомов </span>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Sort By</Label>
+                <Label>Сортировать </Label>
                 <Select value={sortBy || "default"} onValueChange={(value) => setSortBy(value === "default" ? "" : value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Default" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="-rating">Highest Rated</SelectItem>
-                    <SelectItem value="price">Price: Low to High</SelectItem>
-                    <SelectItem value="-price">Price: High to Low</SelectItem>
-                    <SelectItem value="-downloads">Most Popular</SelectItem>
-                    <SelectItem value="-created_at">Newest</SelectItem>
+                    <SelectItem value="default">По умолчанию</SelectItem>
+                    <SelectItem value="-rating">Самый высокий рейтинг</SelectItem>
+                    <SelectItem value="price">от низкой до высокой</SelectItem>
+                    <SelectItem value="-price">от высокой до низкой</SelectItem>
+                    <SelectItem value="-downloads">популярности</SelectItem>
+                    <SelectItem value="-created_at">дате</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -223,14 +220,13 @@ export default function Home({ searchQuery }: HomeProps) {
           </div>
         </aside>
 
-        {/* Products Grid */}
         <main>
           <div className="mb-6">
             <h2 className="text-2xl font-bold">
-              {searchQuery ? `Search results for "${searchQuery}"` : 'All Products'}
+              {searchQuery ? `Результаты поиска по "${searchQuery}"` : 'Все продукты'}
             </h2>
             <p className="text-muted-foreground">
-              {loading ? 'Loading...' : `${products.length} products found`}
+              {loading ? 'Загружается...' : `Найдено товаров: ${products.length}`}
             </p>
           </div>
 
@@ -246,20 +242,20 @@ export default function Home({ searchQuery }: HomeProps) {
             </div>
           ) : products.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {products.map((product) => (
+              {products.map((p) => (
                 <ProductCard
-                  key={product.id}
-                  product={product}
+                  key={p.id}
+                  product={p}
                   onAddToFavorites={handleAddToFavorites}
-                  isFavorite={favorites.includes(product.id)}
+                  isFavorite={favorites.includes(p.id)}
                 />
               ))}
             </div>
           ) : (
             <div className="flex min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed border-border">
               <div className="text-center">
-                <p className="mb-2 text-lg font-semibold">No products found</p>
-                <p className="text-muted-foreground">Try adjusting your filters</p>
+                <p className="mb-2 text-lg font-semibold">Товары не найдены</p>
+                <p className="text-muted-foreground">Попробуйте изменить фильтры</p>
               </div>
             </div>
           )}

@@ -18,12 +18,12 @@ export default function Favorites() {
 
   const loadFavorites = async () => {
     try {
-      const data = await api.getFavorites();
-      setFavorites(data);
+      const d = await api.getFavorites();
+      setFavorites(d);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load favorites",
+        title: "Ошибка",
+        description: "Не удалось загрузить избранных",
         variant: "destructive",
       });
     } finally {
@@ -31,18 +31,18 @@ export default function Favorites() {
     }
   };
 
-  const handleRemove = async (favoriteId: number) => {
+  const handleRemove = async (id: number) => {
     try {
-      await api.removeFromFavorites(favoriteId);
-      setFavorites(favorites.filter((fav) => fav.id !== favoriteId));
+      await api.removeFromFavorites(id);
+      setFavorites(favorites.filter((f) => f.id !== id));
       toast({
-        title: "Removed from favorites",
-        description: "Product removed successfully",
+        title: "Удалить из избранных",
+        description: "Продукт успешно удален",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to remove favorite",
+        title: "Ошибка",
+        description: "Не удалось удалить из избранного",
         variant: "destructive",
       });
     }
@@ -67,26 +67,26 @@ export default function Favorites() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">My Favorites</h1>
+      <h1 className="mb-8 text-3xl font-bold">Избранное</h1>
 
       {favorites.length === 0 ? (
         <Card className="p-12 text-center">
           <Heart className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-          <h2 className="mb-2 text-xl font-semibold">No favorites yet</h2>
+          <h2 className="mb-2 text-xl font-semibold">Нет избранных</h2>
           <p className="mb-6 text-muted-foreground">
-            Start exploring and save your favorite products
+            Начните просматривать и сохраняйте понравившиеся товары
           </p>
           <Button asChild>
-            <Link to="/">Browse Products</Link>
+            <Link to="/">Смотреть товары</Link>
           </Button>
         </Card>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {favorites.map((fav) => (
+          {favorites.map((f) => (
             <ProductCard
-              key={fav.id}
-              product={fav.product}
-              onAddToFavorites={() => handleRemove(fav.id)}
+              key={f.id}
+              product={f.product}
+              onAddToFavorites={() => handleRemove(f.id)}
               isFavorite={true}
             />
           ))}

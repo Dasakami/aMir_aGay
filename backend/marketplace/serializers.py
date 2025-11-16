@@ -59,15 +59,15 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'product_id', 'created_at']
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        product_id = validated_data['product_id']
+        u = self.context['request'].user
+        pid = validated_data['product_id']
         
-        favorite, created = Favorite.objects.get_or_create(
-            user=user,
-            product_id=product_id
+        f, c = Favorite.objects.get_or_create(
+            user=u,
+            product_id=pid
         )
         
-        return favorite
+        return f
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -83,21 +83,21 @@ class CartItemSerializer(serializers.ModelSerializer):
         return obj.get_total_price()
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        product_id = validated_data['product_id']
-        quantity = validated_data.get('quantity', 1)
+        u = self.context['request'].user
+        pid = validated_data['product_id']
+        qty = validated_data.get('quantity', 1)
         
-        cart_item, created = CartItem.objects.get_or_create(
-            user=user,
-            product_id=product_id,
-            defaults={'quantity': quantity}
+        ci, cr = CartItem.objects.get_or_create(
+            user=u,
+            product_id=pid,
+            defaults={'quantity': qty}
         )
         
-        if not created:
-            cart_item.quantity += quantity
-            cart_item.save()
+        if not cr:
+            ci.quantity += qty
+            ci.save()
         
-        return cart_item
+        return ci
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -123,28 +123,28 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'total_price', 'status']
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        cart_items = CartItem.objects.filter(user=user)
+        u = self.context['request'].user
+        cis = CartItem.objects.filter(user=u)
         
-        if not cart_items.exists():
+        if not cis.exists():
             raise serializers.ValidationError('Корзина пуста')
         
-        total_price = sum(item.get_total_price() for item in cart_items)
+        tp = sum(i.get_total_price() for i in cis)
         
-        order = Order.objects.create(
-            user=user,
-            total_price=total_price,
-            email=validated_data.get('email', user.email)
+        o = Order.objects.create(
+            user=u,
+            total_price=tp,
+            email=validated_data.get('email', u.email)
         )
         
-        for cart_item in cart_items:
+        for ci in cis:
             OrderItem.objects.create(
-                order=order,
-                product=cart_item.product,
-                quantity=cart_item.quantity,
-                price=cart_item.product.price
+                order=o,
+                product=ci.product,
+                quantity=ci.quantity,
+                price=ci.product.price
             )
         
-        cart_items.delete()
+        cis.delete()
         
-        return order
+        return o

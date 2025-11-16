@@ -24,13 +24,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await api.login({ username, password });
       setIsAuthenticated(true);
       toast({
-        title: "Welcome back!",
-        description: "Successfully logged in",
+        title: "Добро пожаловать!",
+        description: "Вы успешно вошли в систему",
       });
     } catch (error) {
       toast({
-        title: "Login failed",
-        description: error instanceof Error ? error.message : "Invalid credentials",
+        title: "Ошибка входа",
+        description: error instanceof Error ? error.message : "Неверные учетные данные",
         variant: "destructive",
       });
       throw error;
@@ -41,13 +41,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await api.register({ username, email, password, password2 });
       toast({
-        title: "Account created!",
-        description: "Please log in with your credentials",
+        title: "Аккаунт создан!",
+        description: "Пожалуйста, войдите, используя свои данные",
       });
     } catch (error) {
       toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "Could not create account",
+        title: "Ошибка регистрации",
+        description: error instanceof Error ? error.message : "Не удалось создать аккаунт",
         variant: "destructive",
       });
       throw error;
@@ -57,10 +57,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     api.logout();
     setIsAuthenticated(false);
-    toast({
-      title: "Logged out",
-      description: "Come back soon!",
-    });
+      toast({
+        title: "Выход выполнен",
+        description: "До свидания!",
+      });
   };
 
   return (

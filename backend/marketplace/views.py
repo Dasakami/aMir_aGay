@@ -1,9 +1,8 @@
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import  IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q
 from .models import Category, Style, Product, Favorite, CartItem, Order
 from .serializers import (
     CategorySerializer, StyleSerializer, ProductListSerializer,
@@ -37,40 +36,40 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         return ProductListSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        min_price = self.request.query_params.get('min_price')
-        if min_price:
-            queryset = queryset.filter(price__gte=min_price)
+        q = super().get_queryset()
+        minp = self.request.query_params.get('min_price')
+        if minp:
+            q = q.filter(price__gte=minp)
 
-        max_price = self.request.query_params.get('max_price')
-        if max_price:
-            queryset = queryset.filter(price__lte=max_price)
+        maxp = self.request.query_params.get('max_price')
+        if maxp:
+            q = q.filter(price__lte=maxp)
 
-        category = self.request.query_params.get('category')
-        if category:
-            queryset = queryset.filter(category__name=category)
+        cat = self.request.query_params.get('category')
+        if cat:
+            q = q.filter(category__name=cat)
 
-        style = self.request.query_params.get('style')
-        if style:
-            queryset = queryset.filter(style__name=style)
+        st = self.request.query_params.get('style')
+        if st:
+            q = q.filter(style__name=st)
         
-        return queryset
+        return q
 
     @action(detail=False, methods=['get'])
     def featured(self, request):
-        featured_products = self.get_queryset().filter(is_featured=True)
-        page = self.paginate_queryset(featured_products)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(featured_products, many=True)
-        return Response(serializer.data)
+        items = self.get_queryset().filter(is_featured=True)
+        p = self.paginate_queryset(items)
+        if p is not None:
+            s = self.get_serializer(p, many=True)
+            return self.get_paginated_response(s.data)
+        s = self.get_serializer(items, many=True)
+        return Response(s.data)
 
     @action(detail=False, methods=['get'])
     def popular(self, request):
-        popular_products = self.get_queryset().order_by('-downloads')[:12]
-        serializer = self.get_serializer(popular_products, many=True)
-        return Response(serializer.data)
+        items = self.get_queryset().order_by('-downloads')[:12]
+        s = self.get_serializer(items, many=True)
+        return Response(s.data)
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
@@ -101,9 +100,9 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def total(self, request):
-        cart_items = self.get_queryset()
-        total = sum(item.get_total_price() for item in cart_items)
-        return Response({'total': total, 'items_count': cart_items.count()})
+        items = self.get_queryset()
+        t = sum(i.get_total_price() for i in items)
+        return Response({'total': t, 'items_count': items.count()})
 
 
 class OrderViewSet(viewsets.ModelViewSet):

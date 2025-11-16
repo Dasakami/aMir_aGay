@@ -18,12 +18,12 @@ export default function Cart() {
 
   const loadCart = async () => {
     try {
-      const data = await api.getCart();
-      setCartItems(data);
+      const d = await api.getCart();
+      setCartItems(d);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load cart",
+        title: "Ошибка",
+        description: "Не удалось загрузить корзину",
         variant: "destructive",
       });
     } finally {
@@ -31,18 +31,18 @@ export default function Cart() {
     }
   };
 
-  const handleRemove = async (itemId: number) => {
+  const handleRemove = async (id: number) => {
     try {
-      await api.removeFromCart(itemId);
-      setCartItems(cartItems.filter((item) => item.id !== itemId));
+      await api.removeFromCart(id);
+      setCartItems(cartItems.filter((i) => i.id !== id));
       toast({
-        title: "Removed from cart",
-        description: "Item removed successfully",
+        title: "Удалено из корзины",
+        description: "Товар успешно удален",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to remove item",
+        title: "Ошибка",
+        description: "Не удалось удалить товар",
         variant: "destructive",
       });
     }
@@ -53,21 +53,21 @@ export default function Cart() {
       await api.createOrder('');
       await api.clearCart();
       toast({
-        title: "Order placed!",
-        description: "Your order has been created successfully",
+        title: "Заказ оформлен!",
+        description: "Ваш заказ успешно создан",
       });
       navigate('/orders');
     } catch (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create order",
+        title: "Ошибка",
+        description: error instanceof Error ? error.message : "Не удалось создать заказ",
         variant: "destructive",
       });
     }
   };
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + Number(item.total_price),
+  const t = cartItems.reduce(
+    (s, i) => s + Number(i.total_price),
     0
   );
 
@@ -86,51 +86,51 @@ export default function Cart() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Shopping Cart</h1>
+      <h1 className="mb-8 text-3xl font-bold">Корзина</h1>
 
       {cartItems.length === 0 ? (
         <Card className="p-12 text-center">
           <ShoppingBag className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-          <h2 className="mb-2 text-xl font-semibold">Your cart is empty</h2>
+          <h2 className="mb-2 text-xl font-semibold">Ваша корзина пуста</h2>
           <p className="mb-6 text-muted-foreground">
-            Start shopping to add items to your cart
+            Начните покупки, чтобы добавить товары в корзину
           </p>
           <Button asChild>
-            <Link to="/">Browse Products</Link>
+            <Link to="/">Смотреть товары</Link>
           </Button>
         </Card>
       ) : (
         <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
           <div className="space-y-4">
-            {cartItems.map((item) => (
-              <Card key={item.id} className="p-4">
+            {cartItems.map((i) => (
+              <Card key={i.id} className="p-4">
                 <div className="flex gap-4">
-                  <Link to={`/product/${item.product.id}`}>
+                  <Link to={`/product/${i.product.id}`}>
                     <img
-                      src={item.product.image}
-                      alt={item.product.name}
+                      src={i.product.image}
+                      alt={i.product.name}
                       className="h-24 w-24 rounded-lg object-cover"
                     />
                   </Link>
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
-                      <Link to={`/product/${item.product.id}`}>
+                      <Link to={`/product/${i.product.id}`}>
                         <h3 className="font-semibold hover:text-primary">
-                          {item.product.name}
+                          {i.product.name}
                         </h3>
                       </Link>
                       <p className="text-sm text-muted-foreground">
-                        {item.product.author}
+                        {i.product.author}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-lg font-bold">
-                        ₽{item.total_price}
+                        ₽{i.total_price}
                       </span>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleRemove(item.id)}
+                        onClick={() => handleRemove(i.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -142,23 +142,23 @@ export default function Cart() {
           </div>
 
           <Card className="h-fit p-6">
-            <h2 className="mb-6 text-xl font-bold">Order Summary</h2>
+            <h2 className="mb-6 text-xl font-bold">Итого</h2>
             <div className="space-y-3 border-b border-border pb-4">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Items</span>
+                <span className="text-muted-foreground">Товаров</span>
                 <span>{cartItems.length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span>₽{total.toFixed(2)}</span>
+                <span className="text-muted-foreground">Сумма</span>
+                <span>₽{t.toFixed(2)}</span>
               </div>
             </div>
             <div className="my-4 flex justify-between text-xl font-bold">
-              <span>Total</span>
-              <span>₽{total.toFixed(2)}</span>
+              <span>Всего</span>
+              <span>₽{t.toFixed(2)}</span>
             </div>
             <Button onClick={handleCheckout} className="w-full" size="lg">
-              Proceed to Checkout
+              Оформить заказ
             </Button>
           </Card>
         </div>

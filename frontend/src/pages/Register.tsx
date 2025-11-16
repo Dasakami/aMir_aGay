@@ -25,7 +25,6 @@ export default function Register() {
       await register(username, email, password, password2);
       navigate('/login');
     } catch (error) {
-      // Error is handled in AuthContext
     } finally {
       setLoading(false);
     }
@@ -35,17 +34,17 @@ export default function Register() {
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gradient-subtle px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-          <CardDescription>Enter your details to start shopping</CardDescription>
+          <CardTitle className="text-2xl font-bold">Создать аккаунт</CardTitle>
+          <CardDescription>Введите данные, чтобы начать покупки</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Имя пользователя</Label>
               <Input
                 id="username"
                 type="text"
-                placeholder="Choose a username"
+                placeholder="Выберите имя пользователя"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -56,45 +55,45 @@ export default function Register() {
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Введите email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Пароль</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Create a password"
+                placeholder="Создайте пароль"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password2">Confirm Password</Label>
+              <Label htmlFor="password2">Подтвердите пароль</Label>
               <Input
                 id="password2"
                 type="password"
-                placeholder="Confirm your password"
+                placeholder="Подтвердите пароль"
                 value={password2}
                 onChange={(e) => setPassword2(e.target.value)}
                 required
               />
             </div>
             {password && password2 && password !== password2 && (
-              <p className="text-sm text-destructive">Passwords do not match</p>
+              <p className="text-sm text-destructive">Пароли не совпадают</p>
             )}
             <Button type="submit" className="w-full" disabled={loading || (password !== password2 && password2 !== '')}>
-              {loading ? 'Creating account...' : 'Sign Up'}
+              {loading ? 'Создание аккаунта...' : 'Зарегистрироваться'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{' '}
+            Уже есть аккаунт?{' '}
             <Link to="/login" className="text-primary hover:underline">
-              Login
+              Войти
             </Link>
           </div>
         </CardContent>

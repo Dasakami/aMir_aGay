@@ -80,29 +80,27 @@ class API {
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
-  private async request<T>(url: string, options: RequestInit = {}): Promise<T> {
-  if (!options.headers) options.headers = {};
-  const protectedEndpoints = ['/cart', '/orders', '/favorites', '/categories', '/styles', '/products'];
-  if (protectedEndpoints.some(e => url.startsWith(e))) {
-    options.headers = { ...options.headers, ...this.getAuthHeader() };
+  private async request<T>(url: string, opts: RequestInit = {}): Promise<T> {
+  if (!opts.headers) opts.headers = {};
+  const prot = ['/cart', '/orders', '/favorites', '/categories', '/styles', '/products'];
+  if (prot.some(e => url.startsWith(e))) {
+    opts.headers = { ...opts.headers, ...this.getAuthHeader() };
   }
 
-  const response = await fetch(`${API_BASE_URL}${url}`, options);
+  const res = await fetch(`${API_BASE_URL}${url}`, opts);
 
-  if (!response.ok) {
-    let msg = `Request failed with status ${response.status}`;
+  if (!res.ok) {
+    let m = `Request failed with status ${res.status}`;
     try {
-      const data = await response.json();
-      msg = data.detail || Object.values(data).flat().join(' ') || msg;
+      const d = await res.json();
+      m = d.detail || Object.values(d).flat().join(' ') || m;
     } catch {}
-    throw new Error(msg);
+    throw new Error(m);
   }
 
-  return response.json() as Promise<T>;
+  return res.json() as Promise<T>;
 }
 
-
-  // --- AUTH ---
   async login(credentials: LoginCredentials) {
     const data = await this.request<{ access: string; refresh: string }>('/login/', {
       method: 'POST',
@@ -127,7 +125,6 @@ class API {
     localStorage.removeItem('refresh_token');
   }
 
-  // --- PRODUCTS ---
   async getProducts(params?: Record<string, any>) {
     const query = params ? `?${new URLSearchParams(params).toString()}` : '';
     return this.request<Product[]>(`/products/${query}`);
@@ -137,7 +134,6 @@ class API {
     return this.request<Product>(`/products/${id}/`);
   }
 
-  // --- CATEGORIES & STYLES ---
   async getCategories() {
     return this.request<Category[]>('/categories/');
   }
@@ -146,7 +142,6 @@ class API {
     return this.request<Style[]>('/styles/');
   }
 
-  // --- FAVORITES ---
   async getFavorites() {
     return this.request<Product[]>('/favorites/');
   }
@@ -163,7 +158,6 @@ class API {
     return this.request(`/favorites/${favoriteId}/`, { method: 'DELETE' });
   }
 
-  // --- CART ---
   async getCart() {
     return this.request<CartItem[]>('/cart/');
   }
@@ -184,21 +178,20 @@ class API {
     return this.request('/cart/clear/', { method: 'DELETE' });
   }
 
-  // --- ORDERS ---
   async getOrders() {
     return this.request<Order[]>('/orders/');
   }
 
-  async createOrder(email?: string) {
-  const body: Record<string, any> = {};
-  if (email && email.trim() !== '') {
-    body.email = email;
+  async createOrder(em?: string) {
+  const b: Record<string, any> = {};
+  if (em && em.trim() !== '') {
+    b.email = em;
   }
 
   return this.request<Order>('/orders/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(b),
   });
 }
 

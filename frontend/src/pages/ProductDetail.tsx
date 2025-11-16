@@ -21,12 +21,12 @@ export default function ProductDetail() {
 
   const loadProduct = async () => {
     try {
-      const data = await api.getProduct(Number(id));
-      setProduct(data);
+      const d = await api.getProduct(Number(id));
+      setProduct(d);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to load product",
+        title: "Ошибка",
+        description: "Не удалось загрузить товар",
         variant: "destructive",
       });
     } finally {
@@ -37,8 +37,8 @@ export default function ProductDetail() {
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
       toast({
-        title: "Login required",
-        description: "Please login to add items to cart",
+        title: "Требуется авторизация",
+        description: "Пожалуйста, войдите в систему, чтобы добавить товар в корзину",
         variant: "destructive",
       });
       navigate('/login');
@@ -48,13 +48,13 @@ export default function ProductDetail() {
     try {
       await api.addToCart(Number(id));
       toast({
-        title: "Added to cart",
-        description: "Product added to your cart",
+        title: "Добавлено в корзину",
+        description: "Товар добавлен в вашу корзину",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to add to cart",
+        title: "Ошибка",
+        description: "Не удалось добавить в корзину",
         variant: "destructive",
       });
     }
@@ -63,8 +63,8 @@ export default function ProductDetail() {
   const handleAddToFavorites = async () => {
     if (!isAuthenticated) {
       toast({
-        title: "Login required",
-        description: "Please login to add favorites",
+        title: "Требуется авторизация",
+        description: "Пожалуйста, войдите в систему, чтобы добавить в избранное",
         variant: "destructive",
       });
       navigate('/login');
@@ -74,13 +74,13 @@ export default function ProductDetail() {
     try {
       await api.addToFavorites(Number(id));
       toast({
-        title: "Added to favorites",
-        description: "Product saved to your favorites",
+        title: "Добавлено в избранное",
+        description: "Товар сохранен в избранное",
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to add to favorites",
+        title: "Ошибка",
+        description: "Не удалось добавить в избранное",
         variant: "destructive",
       });
     }
@@ -104,8 +104,8 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <h2 className="mb-4 text-2xl font-bold">Product not found</h2>
-        <Button onClick={() => navigate('/')}>Back to Home</Button>
+        <h2 className="mb-4 text-2xl font-bold">Товар не найден</h2>
+        <Button onClick={() => navigate('/')}>Вернуться на главную</Button>
       </div>
     );
   }
@@ -113,7 +113,6 @@ export default function ProductDetail() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid gap-8 lg:grid-cols-2">
-        {/* Product Image */}
         <div className="overflow-hidden rounded-2xl bg-muted">
           <img
             src={product.image}
@@ -122,18 +121,17 @@ export default function ProductDetail() {
           />
         </div>
 
-        {/* Product Info */}
         <div className="space-y-6">
           <div>
             <div className="mb-3 flex items-center gap-2">
               <Badge>{product.category_name}</Badge>
               <Badge variant="outline">{product.style_name}</Badge>
               {product.is_featured && (
-                <Badge className="bg-gradient-accent">Featured</Badge>
+                <Badge className="bg-gradient-accent">Рекомендуемое</Badge>
               )}
             </div>
             <h1 className="mb-2 text-4xl font-bold">{product.name}</h1>
-            <p className="text-lg text-muted-foreground">by {product.author}</p>
+            <p className="text-lg text-muted-foreground">от {product.author}</p>
           </div>
 
           <div className="flex items-center gap-6">
@@ -152,24 +150,24 @@ export default function ProductDetail() {
               </div>
               <span className="font-semibold">{product.rating}</span>
               <span className="text-muted-foreground">
-                ({product.reviews_count} reviews)
+                ({product.reviews_count} отзывов)
               </span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <Download className="h-5 w-5" />
-              <span>{product.downloads.toLocaleString()} downloads</span>
+              <span>{product.downloads.toLocaleString()} скачиваний</span>
             </div>
           </div>
 
           <div className="rounded-lg bg-muted p-6">
-            <div className="mb-2 text-sm text-muted-foreground">Price</div>
+            <div className="mb-2 text-sm text-muted-foreground">Цена</div>
             <div className="text-4xl font-bold">₽{product.price}</div>
           </div>
 
           <div className="space-y-3">
             <Button onClick={handleAddToCart} size="lg" className="w-full">
               <ShoppingCart className="mr-2 h-5 w-5" />
-              Add to Cart
+              Добавить в корзину
             </Button>
             <Button
               onClick={handleAddToFavorites}
@@ -178,21 +176,21 @@ export default function ProductDetail() {
               className="w-full"
             >
               <Heart className="mr-2 h-5 w-5" />
-              Add to Favorites
+              Добавить в избранное
             </Button>
           </div>
 
           <div className="space-y-3 border-t border-border pt-6">
-            <h3 className="font-semibold">Description</h3>
+            <h3 className="font-semibold">Описание</h3>
             <p className="text-muted-foreground">{product.description}</p>
           </div>
 
           <div className="space-y-3 border-t border-border pt-6">
-            <h3 className="font-semibold">Tags</h3>
+            <h3 className="font-semibold">Теги</h3>
             <div className="flex flex-wrap gap-2">
-              {product.tags.map((tag) => (
-                <Badge key={tag} variant="secondary">
-                  {tag}
+              {product.tags.map((t) => (
+                <Badge key={t} variant="secondary">
+                  {t}
                 </Badge>
               ))}
             </div>

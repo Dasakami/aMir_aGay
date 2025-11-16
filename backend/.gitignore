@@ -1,17 +1,8 @@
-# Python
 *.pyc
 *.pyo
 __pycache__/
 *.pyd
-*.pdb
-*.egg-info/
-*.egg
-env/
-venv/
-ENV/
-.env
 
-# Django
 *.log
 *.pot
 *.py[cod]
@@ -19,12 +10,3 @@ db.sqlite3
 media/
 staticfiles/
 node_modules/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-
-# System
-.DS_Store
-Thumbs.db

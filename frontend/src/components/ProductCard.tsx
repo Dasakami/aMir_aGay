@@ -13,13 +13,13 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onAddToFavorites, isFavorite }: ProductCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [hover, setHover] = useState(false);
 
   return (
     <Card
       className="group overflow-hidden transition-all duration-300 hover:shadow-lg"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
       <Link to={`/product/${product.id}`}>
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
@@ -30,7 +30,7 @@ export default function ProductCard({ product, onAddToFavorites, isFavorite }: P
           />
           {product.is_featured && (
             <Badge className="absolute left-3 top-3 bg-gradient-accent">
-              Featured
+              Рекомендуемое
             </Badge>
           )}
         </div>
@@ -80,14 +80,14 @@ export default function ProductCard({ product, onAddToFavorites, isFavorite }: P
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold">₽{product.price}</span>
+          <span className="text-2xl font-bold">{product.price} сом</span>
           <Button
             size="sm"
             className={`transition-all duration-300 ${
-              isHovered ? 'translate-x-0 opacity-100' : 'translate-x-2 opacity-0'
+              hover ? 'translate-x-0 opacity-100' : 'translate-x-2 opacity-0'
             }`}
           >
-            View Details
+            Подробнее
           </Button>
         </div>
       </div>

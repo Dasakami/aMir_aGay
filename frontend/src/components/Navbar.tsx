@@ -29,9 +29,7 @@ export default function Navbar({ onSearch }: NavbarProps) {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary">
-              <span className="text-lg font-bold text-primary-foreground">DM</span>
-            </div>
+            
             <span className="text-xl font-bold">DesignMarket</span>
           </Link>
 
@@ -40,7 +38,7 @@ export default function Navbar({ onSearch }: NavbarProps) {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search templates, mockups, icons..."
+                placeholder="Поиск шаблонов, мокапов, иконок..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -69,11 +67,11 @@ export default function Navbar({ onSearch }: NavbarProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link to="/orders">My Orders</Link>
+                      <Link to="/orders">Мои заказы</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={logout}>
                       <LogOut className="mr-2 h-4 w-4" />
-                      Logout
+                      Выйти
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -81,10 +79,10 @@ export default function Navbar({ onSearch }: NavbarProps) {
             ) : (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/login">Login</Link>
+                  <Link to="/login">Вход</Link>
                 </Button>
                 <Button asChild>
-                  <Link to="/register">Sign Up</Link>
+                  <Link to="/register">Регистрация</Link>
                 </Button>
               </>
             )}

@@ -26,15 +26,14 @@ class Command(BaseCommand):
             {'name': 'Графика', 'slug': 'graphics', 'description': 'Графические элементы'},
         ]
 
-        for cat_data in categories_data:
+        for c in categories_data:
             Category.objects.get_or_create(
-                slug=cat_data['slug'],
-                defaults={'name': cat_data['name'], 'description': cat_data['description']}
+                slug=c['slug'],
+                defaults={'name': c['name'], 'description': c['description']}
             )
         
         self.stdout.write(self.style.SUCCESS(f'Создано {len(categories_data)} категорий'))
 
-        # Создание стилей
         styles_data = [
             {'name': 'Минимализм', 'slug': 'minimalism', 'description': 'Минималистичный дизайн'},
             {'name': 'Неоморфизм', 'slug': 'neomorphism', 'description': 'Soft UI дизайн'},
@@ -45,17 +44,16 @@ class Command(BaseCommand):
             {'name': 'Modern', 'slug': 'modern', 'description': 'Современный стиль'},
         ]
 
-        for style_data in styles_data:
+        for s in styles_data:
             Style.objects.get_or_create(
-                slug=style_data['slug'],
-                defaults={'name': style_data['name'], 'description': style_data['description']}
+                slug=s['slug'],
+                defaults={'name': s['name'], 'description': s['description']}
             )
         
         self.stdout.write(self.style.SUCCESS(f'Создано {len(styles_data)} стилей'))
 
-        # Создание продуктов
-        categories = list(Category.objects.all())
-        styles = list(Style.objects.all())
+        cats = list(Category.objects.all())
+        sts = list(Style.objects.all())
 
         products_data = [
             {
@@ -360,31 +358,31 @@ class Command(BaseCommand):
             },
         ]
 
-        created_count = 0
-        for prod_data in products_data:
-            category = Category.objects.get(slug=prod_data['category'])
-            style = Style.objects.get(slug=prod_data['style'])
+        cnt = 0
+        for p in products_data:
+            cat = Category.objects.get(slug=p['category'])
+            st = Style.objects.get(slug=p['style'])
             
-            product, created = Product.objects.get_or_create(
-                slug=prod_data['slug'],
+            prod, cr = Product.objects.get_or_create(
+                slug=p['slug'],
                 defaults={
-                    'name': prod_data['name'],
-                    'description': prod_data['description'],
-                    'category': category,
-                    'style': style,
-                    'price': prod_data['price'],
-                    'image': prod_data['image'],
-                    'author': prod_data['author'],
-                    'rating': prod_data['rating'],
-                    'reviews_count': prod_data['reviews_count'],
-                    'downloads': prod_data['downloads'],
-                    'tags': prod_data['tags'],
-                    'is_featured': prod_data['is_featured'],
+                    'name': p['name'],
+                    'description': p['description'],
+                    'category': cat,
+                    'style': st,
+                    'price': p['price'],
+                    'image': p['image'],
+                    'author': p['author'],
+                    'rating': p['rating'],
+                    'reviews_count': p['reviews_count'],
+                    'downloads': p['downloads'],
+                    'tags': p['tags'],
+                    'is_featured': p['is_featured'],
                 }
             )
             
-            if created:
-                created_count += 1
+            if cr:
+                cnt += 1
 
-        self.stdout.write(self.style.SUCCESS(f'Создано {created_count} продуктов'))
+        self.stdout.write(self.style.SUCCESS(f'Создано {cnt} продуктов'))
         self.stdout.write(self.style.SUCCESS('Загрузка данных завершена!'))
